@@ -77,10 +77,12 @@ async def run_sample_module(sample_path: Path, test_inputs: dict | None = None) 
             else:
                 sys.argv = [str(sample_path)]
             
-            # Redirect output to suppress sample output
+            # Capture output
             import io
-            sys.stdout = io.StringIO()
-            sys.stderr = io.StringIO()
+            stdout_capture = io.StringIO()
+            stderr_capture = io.StringIO()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
             sys.stdin = io.StringIO()  # Prevent waiting for input
             
             spec.loader.exec_module(module)
@@ -89,7 +91,55 @@ async def run_sample_module(sample_path: Path, test_inputs: dict | None = None) 
             if hasattr(module, "main"):
                 timeout_s = float(os.getenv("COPILOT_E2E_TIMEOUT", "45"))
                 await asyncio.wait_for(module.main(), timeout=timeout_s)
-                return ScenarioResult(name, True, "OK")
+                
+                # Get captured output
+                output = stdout_capture.getvalue()
+                errors = stderr_capture.getvalue()
+                
+                # Clean output (ASCII-only for cross-platform compatibility)
+                def clean_text(text: str) -> str:
+                    # Remove common Unicode symbols
+                    replacements = {
+                        '✅': '[OK]',
+                        '✓': '[OK]',
+                        '❌': '[FAIL]',
+                        '✗': '[FAIL]',
+                        '⚠️': '[WARN]',
+                        '🤖': '',
+                        '📝': '',
+                        '📋': '',
+                        '🧪': '',
+                        '🔄': '',
+                        '🔧': '',
+                        '📄': '',
+                        '📊': '',
+                        '⚙️': '',
+                        '🌐': '',
+                        '🎯': '',
+                        '🔐': '',
+                        '📍': '',
+                        '🎲': '',
+                        '🔢': '',
+                    }
+                    for old, new in replacements.items():
+                        text = text.replace(old, new)
+                    # Remove any remaining non-ASCII
+                    return ''.join(c if ord(c) < 128 else '' for c in text)
+                
+                # Return first meaningful line or summary
+                if output:
+                    output = clean_text(output)
+                    lines = [l.strip() for l in output.split('\n') if l.strip()]
+                    # Get the last substantial line (often the result)
+                    meaningful = [l for l in lines if not l.startswith(('Running', 'Loading', 'Connecting'))]
+                    if meaningful:
+                        detail = meaningful[-1][:120]
+                    else:
+                        detail = lines[-1][:120] if lines else "Completed"
+                else:
+                    detail = "Completed successfully"
+                
+                return ScenarioResult(name, True, detail)
             else:
                 return ScenarioResult(name, False, "No main() function found")
         finally:
@@ -105,7 +155,7 @@ async def run_sample_module(sample_path: Path, test_inputs: dict | None = None) 
     except SystemExit as e:
         # Some samples use sys.exit() for usage errors
         if e.code == 0:
-            return ScenarioResult(name, True, "OK")
+            return ScenarioResult(name, True, "Completed")
         return ScenarioResult(name, False, f"Exit code {e.code}")
     except Exception as e:
         error_msg = str(e)[:80]
@@ -183,7 +233,11 @@ async def run(provider: str, model: str) -> int:
             
             status = "PASS" if result.ok else "FAIL"
             print(status)
-    print("RESULTS")
+    
+    # Print summary
+    print()
+    print("=" * 80)
+    print("SCENARIO RESULTS")
     print("=" * 80)
     print()
     
@@ -192,13 +246,35 @@ async def run(provider: str, model: str) -> int:
     for r in results:
         status = "PASS" if r.ok else "FAIL"
         marker = "+" if r.ok else "!"
-        print(f"{marker} {r.name:25} {status:6}  {r.details}")
+        
+        # Print scenario with details
+        print(f"{marker} {r.name}")
+        print(f"  Status: {status}")
+        if r.details and r.details != r.name:
+            # Wrap long details
+            detail_lines = []
+            current_line = ""
+            words = r.details.split()
+            for word in words:
+                if len(current_line) + len(word) + 1 <= 74:
+                    current_line += (" " if current_line else "") + word
+                else:
+                    if current_line:
+                        detail_lines.append(current_line)
+                    current_line = word
+            if current_line:
+                detail_lines.append(current_line)
+            
+            print(f"  Result: {detail_lines[0]}")
+            for line in detail_lines[1:]:
+                print(f"          {line}")
+        print()
+        
         if r.ok:
             passed += 1
         else:
             failed += 1
     
-    print()
     print("=" * 80)
     print(f"Summary: {passed} passed, {failed} failed out of {len(results)} scenarios")
     print("=" * 80)
