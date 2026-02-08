@@ -43,6 +43,10 @@ Thumbs.db
 .coverage
 htmlcov/
 .tox/
+test-e2e.log
+e2e-logs/
+e2e-logs*.zip
+tests/
 
 # Local config
 .env
