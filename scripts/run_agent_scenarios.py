@@ -105,41 +105,33 @@ async def run_sample_module(sample_path: Path, test_inputs: dict | None = None) 
                         '❌': '[FAIL]',
                         '✗': '[FAIL]',
                         '⚠️': '[WARN]',
-                        '🤖': '',
-                        '📝': '',
-                        '📋': '',
-                        '🧪': '',
-                        '🔄': '',
-                        '🔧': '',
-                        '📄': '',
-                        '📊': '',
-                        '⚙️': '',
-                        '🌐': '',
-                        '🎯': '',
-                        '🔐': '',
-                        '📍': '',
-                        '🎲': '',
-                        '🔢': '',
+                        '🤖': '[AI]',
+                        '📝': '[INPUT]',
+                        '📋': '[INFO]',
+                        '🧪': '[TEST]',
+                        '🔄': '[PROCESS]',
+                        '🔧': '[TOOL]',
+                        '📄': '[FILE]',
+                        '📊': '[DATA]',
+                        '⚙️': '[CONFIG]',
+                        '🌐': '[WEB]',
+                        '🎯': '[TARGET]',
+                        '🔐': '[AUTH]',
+                        '📍': '[LOCATION]',
+                        '🎲': '[GEN]',
+                        '🔢': '[NUM]',
                     }
                     for old, new in replacements.items():
                         text = text.replace(old, new)
                     # Remove any remaining non-ASCII
                     return ''.join(c if ord(c) < 128 else '' for c in text)
                 
-                # Return first meaningful line or summary
+                # Return full output (cleaned)
                 if output:
-                    output = clean_text(output)
-                    lines = [l.strip() for l in output.split('\n') if l.strip()]
-                    # Get the last substantial line (often the result)
-                    meaningful = [l for l in lines if not l.startswith(('Running', 'Loading', 'Connecting'))]
-                    if meaningful:
-                        detail = meaningful[-1][:120]
-                    else:
-                        detail = lines[-1][:120] if lines else "Completed"
+                    full_output = clean_text(output.strip())
+                    return ScenarioResult(name, True, full_output)
                 else:
-                    detail = "Completed successfully"
-                
-                return ScenarioResult(name, True, detail)
+                    return ScenarioResult(name, True, "Completed successfully (no output)")
             else:
                 return ScenarioResult(name, False, "No main() function found")
         finally:
@@ -158,7 +150,7 @@ async def run_sample_module(sample_path: Path, test_inputs: dict | None = None) 
             return ScenarioResult(name, True, "Completed")
         return ScenarioResult(name, False, f"Exit code {e.code}")
     except Exception as e:
-        error_msg = str(e)[:80]
+        error_msg = str(e)[:200]
         return ScenarioResult(name, False, error_msg)
 
 
@@ -237,7 +229,7 @@ async def run(provider: str, model: str) -> int:
     # Print summary
     print()
     print("=" * 80)
-    print("SCENARIO RESULTS")
+    print("SCENARIO EXECUTION RESULTS")
     print("=" * 80)
     print()
     
@@ -247,27 +239,21 @@ async def run(provider: str, model: str) -> int:
         status = "PASS" if r.ok else "FAIL"
         marker = "+" if r.ok else "!"
         
-        # Print scenario with details
-        print(f"{marker} {r.name}")
+        # Print scenario header
+        print(f"{marker} {r.name.upper()}")
         print(f"  Status: {status}")
+        print()
+        
         if r.details and r.details != r.name:
-            # Wrap long details
-            detail_lines = []
-            current_line = ""
-            words = r.details.split()
-            for word in words:
-                if len(current_line) + len(word) + 1 <= 74:
-                    current_line += (" " if current_line else "") + word
-                else:
-                    if current_line:
-                        detail_lines.append(current_line)
-                    current_line = word
-            if current_line:
-                detail_lines.append(current_line)
-            
-            print(f"  Result: {detail_lines[0]}")
-            for line in detail_lines[1:]:
-                print(f"          {line}")
+            # Print full execution details with indentation
+            lines = r.details.split('\n')
+            for line in lines:
+                # Indent each line for readability
+                if line.strip():
+                    print(f"  {line}")
+            print()
+        
+        print("-" * 80)
         print()
         
         if r.ok:
