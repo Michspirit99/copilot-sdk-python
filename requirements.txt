@@ -1,0 +1,4 @@
+# GitHub Copilot SDK for Python
+# Install with: pip install -r requirements.txt
+github-copilot-sdk
+playwright
