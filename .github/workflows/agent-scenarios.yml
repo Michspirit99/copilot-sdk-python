@@ -41,6 +41,14 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
+      - name: Fix Copilot binary permissions (Linux/Mac)
+        run: |
+          COPILOT_BIN=$(python -c "import copilot; import os; print(os.path.join(os.path.dirname(copilot.__file__), 'bin', 'copilot'))")
+          if [ -f "$COPILOT_BIN" ]; then
+            chmod +x "$COPILOT_BIN"
+            echo "✓ Made copilot binary executable: $COPILOT_BIN"
+          fi
+
       - name: Validate required secrets
         env:
           PROVIDER: ${{ inputs.provider }}
