@@ -18,7 +18,6 @@ import asyncio
 import ast
 import json
 import re
-import sys
 
 from copilot import CopilotClient
 

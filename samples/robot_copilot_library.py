@@ -22,8 +22,6 @@ import asyncio
 import ast
 import json
 import re
-import sys
-from pathlib import Path
 
 from copilot import CopilotClient
 
@@ -334,7 +332,7 @@ async def main():
                     keywords = ["zero", "empty", "division", "len"]
                     found = [kw for kw in keywords if kw in review]
                     if not found:
-                        raise AssertionError(f"Bug not detected in review")
+                        raise AssertionError("Bug not detected in review")
                     detail = f"Review:\n{response.data.content[:200]}"
 
                 elif "JSON" in scenario["when"]:
@@ -357,7 +355,7 @@ async def main():
 
                 for then_step in scenario["then"]:
                     print(f"  Then  {then_step}  ✅")
-                print(f"  Result: PASS")
+                print("  Result: PASS")
                 print(f"  {detail}")
                 passed += 1
 

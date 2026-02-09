@@ -27,8 +27,6 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from copilot import CopilotClient
-
 
 @dataclass
 class ScenarioResult:
@@ -94,7 +92,6 @@ async def run_sample_module(sample_path: Path, test_inputs: dict | None = None) 
                 
                 # Get captured output
                 output = stdout_capture.getvalue()
-                errors = stderr_capture.getvalue()
                 
                 # Clean output (ASCII-only for cross-platform compatibility)
                 def clean_text(text: str) -> str:
