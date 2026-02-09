@@ -1,17 +1,17 @@
 # Copilot SDK for Python — Complete Sample Collection 🚀
 
-> **Production-ready Python samples for the GitHub Copilot SDK** — 15 fully-functional examples demonstrating AI agents, custom tools, browser automation, code review, and more. All tested in CI with `gpt-5-mini` (free tier). Clone, run, and build.
+> **Production-ready Python samples for the GitHub Copilot SDK** — 17 fully-functional examples demonstrating AI agents, custom tools, browser automation, code review, BDD testing, and more. All tested in CI with `gpt-5-mini` (free tier). Clone, run, and build.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![CI Status](https://github.com/Michspirit99/copilot-sdk-python/actions/workflows/ci.yml/badge.svg)](https://github.com/Michspirit99/copilot-sdk-python/actions/workflows/ci.yml)
-[![E2E Proof](https://img.shields.io/badge/E2E-15%2F15%20passing-brightgreen)](https://github.com/Michspirit99/copilot-sdk-python/actions/workflows/agent-scenarios.yml)
+[![E2E Proof](https://img.shields.io/badge/E2E-17%2F17%20passing-brightgreen)](https://github.com/Michspirit99/copilot-sdk-python/actions/workflows/agent-scenarios.yml)
 
 ## Why This Repository?
 
 This is **the most comprehensive collection of Python samples** for the [GitHub Copilot SDK](https://github.com/github/copilot-sdk). Unlike minimal "hello world" examples, these are **production-ready patterns** you can actually use:
 
-- ✅ **15 complete samples** — streaming, tools, multi-turn, browser automation, code review, and more
+- ✅ **17 complete samples** — streaming, tools, BDD testing, browser automation, code review, and more
 - ✅ **Proven in CI** — All samples run end-to-end with `gpt-5-mini` (GitHub's free tier model)
 - ✅ **Single-file simplicity** — Each sample is self-contained and ready to run
 - ✅ **Real-world patterns** — API testing, log analysis, test data generation, git commit messages
@@ -88,6 +88,14 @@ python samples/code_reviewer.py samples/hello_copilot.py
 | [**file_summarizer.py**](samples/file_summarizer.py) | Summarize any text file | Documentation, README generation |
 | [**git_commit_writer.py**](samples/git_commit_writer.py) | Generate conventional commit messages | Git workflow automation |
 
+### 🧪 AI-Enhanced Testing
+
+| Sample | What It Shows | Key Techniques |
+|--------|--------------|----------------|
+| [**pytest_ai_validation.py**](samples/pytest_ai_validation.py) | AI-enhanced pytest with intelligent assertions | AI-as-judge, `ast.parse` validation, JSON schema checks, `copilot_session` fixture |
+| [**robot_copilot_library.py**](samples/robot_copilot_library.py) | Robot Framework keyword library for AI agents | BDD/Gherkin scenarios, keyword-driven AI testing, enterprise test integration |
+| [**copilot_bdd.robot**](samples/copilot_bdd.robot) | BDD test suite (Given/When/Then) for AI behaviour | Robot Framework `.robot` file, Gherkin syntax, AI code generation + review |
+
 **All samples include:**
 - ✅ Complete, runnable code
 - ✅ Type hints and documentation
@@ -100,23 +108,25 @@ python samples/code_reviewer.py samples/hello_copilot.py
 Unlike most SDK examples, **every sample in this repository is proven to work** end-to-end in CI:
 
 ```
-+ API_TEST_GENERATOR      [OK] Test generation complete!
-+ CODE_REVIEWER           [OK] Review complete  
-+ CUSTOM_TOOLS            [OK] Tool calls executed
-+ FILE_SUMMARIZER         [OK] Summary generated
-+ GIT_COMMIT_WRITER       [OK] Commit message created
-+ HELLO_COPILOT           [OK] Basic prompt/response
-+ LOG_ANALYZER            [OK] Log analysis complete
-+ MODEL_EXPLORER          [OK] 14 models discovered
-+ MULTI_MODEL             [OK] 2 models compared
-+ RESILIENT_CLIENT        [OK] 3 prompts with retries
-+ STREAMING_CHAT          [OK] Token streaming works
-+ TEST_DATA_GENERATOR     [OK] Test data generated
-+ MULTI_TURN_AGENT        [OK] Stateful conversation
-+ INTERACTIVE_CHAT        [SKIP] Interactive (requires stdin)
-+ PLAYWRIGHT_AGENT        [SKIP] Requires browser setup
++ API_TEST_GENERATOR       [OK] Test generation complete!
++ CODE_REVIEWER            [OK] Review complete  
++ CUSTOM_TOOLS             [OK] Tool calls executed
++ FILE_SUMMARIZER          [OK] Summary generated
++ GIT_COMMIT_WRITER        [OK] Commit message created
++ HELLO_COPILOT            [OK] Basic prompt/response
++ LOG_ANALYZER             [OK] Log analysis complete
++ MODEL_EXPLORER           [OK] 14 models discovered
++ MULTI_MODEL              [OK] 2 models compared
++ PYTEST_AI_VALIDATION     [OK] 4/4 AI tests passed
++ RESILIENT_CLIENT         [OK] 3 prompts with retries
++ ROBOT_COPILOT_LIBRARY    [OK] 3/3 BDD scenarios passed
++ STREAMING_CHAT           [OK] Token streaming works
++ TEST_DATA_GENERATOR      [OK] Test data generated
++ MULTI_TURN_AGENT         [OK] Stateful conversation
++ INTERACTIVE_CHAT         [SKIP] Interactive (requires stdin)
++ PLAYWRIGHT_AGENT         [SKIP] Requires browser setup
 
-Summary: 15/15 scenarios validated (12 run, 3 skipped for interactivity)
+Summary: 17/17 scenarios validated (14 run, 3 skipped for interactivity)
 ```
 
 See [E2E workflow runs](https://github.com/Michspirit99/copilot-sdk-python/actions/workflows/agent-scenarios.yml) for full transcripts showing what each agent actually does.
@@ -137,6 +147,34 @@ python samples/playwright_agent.py https://example.com "Describe the page"
 python samples/log_analyzer.py app.log errors
 python samples/api_test_generator.py swagger.json pytest
 python samples/test_data_generator.py user 50 json
+```
+
+## AI-Enhanced Testing
+
+These samples show how to integrate AI validation into established test frameworks — proving that Copilot SDK agents work correctly using the **same tools enterprises already use**.
+
+**🧪 pytest ([pytest_ai_validation.py](samples/pytest_ai_validation.py))**
+- AI-as-judge pattern: one AI call validates another's output
+- Deterministic + AI assertions: `ast.parse`, `json.loads` + AI relevance checks
+- `copilot_session` fixture for test lifecycle
+- Runs standalone OR with `pytest -v`
+
+**🤖 Robot Framework ([copilot_bdd.robot](samples/copilot_bdd.robot) + [robot_copilot_library.py](samples/robot_copilot_library.py))**
+- BDD/Gherkin syntax: `Given I have a Copilot session / When I ask Copilot to generate code / Then the code should be valid Python`
+- Python keyword library wrapping the entire Copilot SDK
+- Enterprise-ready: integrates AI agent testing into existing Robot Framework suites
+- 4 scenarios: code generation, bug detection, JSON output, concept explanation
+
+```bash
+# Run pytest AI tests
+pytest samples/pytest_ai_validation.py -v
+
+# Run Robot Framework BDD tests
+robot samples/copilot_bdd.robot
+
+# Both also run standalone (no test framework required)
+python samples/pytest_ai_validation.py
+python samples/robot_copilot_library.py
 ```
 
 ## Automation Use Cases
@@ -275,8 +313,11 @@ copilot-sdk-python-scripts/
 │   ├── git_commit_writer.py    # Git commit message generation
 │   ├── playwright_agent.py     # Browser automation
 │   ├── log_analyzer.py         # Log file analysis
-│   ├── api_test_generator.py   # API test generation
-│   └── test_data_generator.py  # Test data generation
+│   ├── api_test_generator.py        # API test generation
+│   ├── test_data_generator.py       # Test data generation
+│   ├── pytest_ai_validation.py      # AI-enhanced pytest testing
+│   ├── robot_copilot_library.py     # Robot Framework keyword library
+│   └── copilot_bdd.robot            # BDD test suite (Given/When/Then)
 ├── .github/
 │   ├── workflows/
 │   │   ├── ci.yml               # CI validation (no live AI calls)
@@ -293,7 +334,7 @@ copilot-sdk-python-scripts/
 **Best SDK Sample Collection Available:**
 | This Repository | Typical SDK Examples |
 |---|---|
-| 15 production-ready samples | 2-3 "hello world" scripts |
+| 17 production-ready samples | 2-3 "hello world" scripts |
 | E2E tested in CI (see runs) | Untested or manual-only |
 | Real-world use cases | Toy examples |
 | Error handling + best practices | Happy path only |

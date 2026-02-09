@@ -2,3 +2,8 @@
 # Install with: pip install -r requirements.txt
 github-copilot-sdk
 playwright
+
+# Testing frameworks (for pytest_ai_validation.py and copilot_bdd.robot)
+pytest
+pytest-asyncio
+robotframework

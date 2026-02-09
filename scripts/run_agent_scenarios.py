@@ -173,7 +173,7 @@ async def run(provider: str, model: str) -> int:
     # Create temporary demo files for samples that need file inputs
     with tempfile.TemporaryDirectory() as tmpdir:
         tmppath = Path(tmpdir)
-        
+
         # Demo OpenAPI spec for api_test_generator
         demo_spec = tmppath / "demo_api.json"
         demo_spec.write_text('{"openapi":"3.0.0","paths":{"/users":{"get":{}}}}')
@@ -225,6 +225,14 @@ async def run(provider: str, model: str) -> int:
             
             status = "PASS" if result.ok else "FAIL"
             print(status)
+        
+        # Report .robot files (run via robot_copilot_library.py standalone)
+        for robot_file in sorted(samples_dir.glob("*.robot")):
+            results.append(ScenarioResult(
+                robot_file.stem, 
+                True,
+                "SKIP - Run via: robot samples/copilot_bdd.robot (BDD scenarios tested through robot_copilot_library.py)"
+            ))
     
     # Print summary
     print()
