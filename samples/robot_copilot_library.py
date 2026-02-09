@@ -203,7 +203,7 @@ class CopilotLibrary:
         if not isinstance(data, dict):
             raise AssertionError(
                 f"Expected JSON object (dict), but got {type(data).__name__}.\n"
-                f"Value: {str(data)[:200]}"
+                f"Value: {str(data)[:300]}"
             )
         return data
 
