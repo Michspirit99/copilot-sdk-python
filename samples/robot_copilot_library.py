@@ -199,7 +199,7 @@ class CopilotLibrary:
             raise AssertionError(
                 f"Invalid JSON: {e}\n\nRaw:\n{self._last_response[:300]}"
             )
-        
+
         if not isinstance(data, dict):
             raise AssertionError(
                 f"Expected JSON object (dict), but got {type(data).__name__}.\n"
