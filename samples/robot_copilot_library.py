@@ -195,11 +195,17 @@ class CopilotLibrary:
         """Assert that the last response is valid JSON and return the parsed dict."""
         try:
             data = json.loads(self._last_response)
-            return data
         except json.JSONDecodeError as e:
             raise AssertionError(
                 f"Invalid JSON: {e}\n\nRaw:\n{self._last_response[:300]}"
             )
+        
+        if not isinstance(data, dict):
+            raise AssertionError(
+                f"Expected JSON object (dict), but got {type(data).__name__}.\n"
+                f"Value: {str(data)[:200]}"
+            )
+        return data
 
     def json_should_have_keys(self, *keys):
         """Assert that the parsed JSON contains all specified keys.
@@ -208,6 +214,7 @@ class CopilotLibrary:
             JSON Should Have Keys    name    age    email
         """
         data = self.json_should_be_valid()
+        # json_should_be_valid() already asserts isinstance(data, dict)
         missing = set(keys) - set(data.keys())
         if missing:
             raise AssertionError(
