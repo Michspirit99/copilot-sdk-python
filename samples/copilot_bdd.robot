@@ -7,7 +7,7 @@ Documentation    BDD tests for AI agents powered by GitHub Copilot SDK.
 ...              Run:  robot samples/copilot_bdd.robot
 ...              Requires: pip install robotframework github-copilot-sdk
 
-Library          samples/robot_copilot_library.CopilotLibrary
+Library          samples.robot_copilot_library.CopilotLibrary
 
 Suite Setup      Start Copilot Session    gpt-5-mini
 Suite Teardown   Stop Copilot Session
