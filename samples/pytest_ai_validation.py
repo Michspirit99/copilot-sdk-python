@@ -96,7 +96,7 @@ async def scenario_bug_detection(session) -> tuple[bool, str]:
     response = await session.send_and_wait({
         "prompt": (
             "Review this Python code for bugs. Be specific:\n\n"
-            f"```python\n{buggy_code}```"
+            f"```python\n{buggy_code}\n```"
         )
     })
     review = response.data.content.lower()
